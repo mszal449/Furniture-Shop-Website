@@ -17,7 +17,7 @@ const connectDB = require('./db/connect')
 
 // middleware
 app.use(express.json())
-
+app.use(express.static('./public'))
 
 // routes
 const productsRouter = require('./routes/router')
