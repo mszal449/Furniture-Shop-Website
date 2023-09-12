@@ -28,10 +28,6 @@ app.get('/', (req, res) => {
 })
 
 
-
-
-
-
 // use middleware
 app.use(errorMiddleware)
 app.use(notFoundMiddleware)

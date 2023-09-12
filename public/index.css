@@ -28,6 +28,7 @@ width of the window gets too small */
 .content-filters {
     border: 1px solid red;
     flex: 1;
+    padding: 10px;  
 }
 
 /* ELEMENTS */
@@ -38,5 +39,6 @@ with the width of the window
 .content-elements {
     border: 1px solid blue;
     flex: 4;
+    padding: 10px;  
 }
 
