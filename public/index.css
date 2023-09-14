@@ -1,23 +1,20 @@
+
+body {
+    margin: 0;
+}
+
 .header {
+    margin: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background-color: #f0f0f0;
-}
-
-.header-logo {
-    flex: 0 0 auto;
-}
-
-.header-title {
-    flex: 1 1 auto;
-    text-align: center;
+    padding: 0;  
+    background-color: #9A3B3B;
+    color: white;
 }
 
 .content {
-    display: flex;
-    border: 1px solid black;
+    text-align: center;
 }
 
 
@@ -26,8 +23,7 @@
 ultimately the filters will go above products when the
 width of the window gets too small */
 .content-filters {
-    border: 1px solid red;
-    flex: 1;
+    background-color: #E2C799;
     padding: 10px;  
 }
 
@@ -37,8 +33,19 @@ ultimately the amount of products will grow smaller
 with the width of the window 
 */
 .content-elements {
-    border: 1px solid blue;
     flex: 4;
-    padding: 10px;  
+    padding: 10px; 
+    margin: 20px; 
 }
 
+.products-header {
+    display: flex;
+    justify-content: center;
+    gap:10px;
+}
+
+.product {
+    display: flex;
+    justify-content: space-between;
+    gap:10px;
+}

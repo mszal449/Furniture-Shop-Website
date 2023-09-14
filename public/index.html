@@ -8,41 +8,48 @@
     <link rel="stylesheet" href="normalize.css">
 </head>
 <body>
-    <!-- Website header -->
-    <div class="header">
-        <div class="header-logo">Logo</div>
-        <div class="header-title">Title</div>
-    </div>
-    <!-- Content -->
     <div class="content">
+        <!-- FILTERS -->
         <div class="content-filters">
             <div class="filter-container">
-                <div>name</div>
+                <div>Name</div>
                 <input type="text" class="filter-name" placeholder="eg. chair">
             </div>
             <div class="filter-container">
-                <div>price</div>
+                <div>Price</div>
+                <div class="price-filters-input">    
+                    <input type="text" class="price-from" placeholder="from">
+                    <div>-</div>
+                    <input type="text" class="price-up-to" placeholder="up to">
+                </div>
             </div>
             <div class="filter-container">
                 <div>company</div>
-                <ul>
-                    <li><input type="checkbox" class="filter-option">obj1</li>
-                    <li><input type="checkbox" class="filter-option">obj2</li>
-                    <li><input type="checkbox" class="filter-option">obj3</li>
-                </ul>
+                <div class="companies-options">
+                    <div class="comapny-option" style="display: flex; justify-content: center;">
+                    </div>
+                </div>
             </div>
-            <div class="filter-container">filter4</div>
+            <div style="display: flex; justify-content: center; gap: 5px;">        
+                <button class="apply-filters-btn">Apply Filters</button>
+                <button class="reset-filters-btn">Reset Filters</button>
+            </div>
         </div>
-        <div class="content-elements">
-            <div class="element">
-                <div class="element-name">name</div>
-                <div class="element rating">rating</div>
-                <div class="element-description">description</div>
-                <button class="elemeny-buy">Buy now</button>
-                <button class="elemeny-buy">Add to card</button>
+        <!-- PRODUCTS -->
+        <div class="products-container">
+            <div class="products-header">
+                <div>name</div>
+                <div>price</div>
+                <div>company</div>
+                <div>rating</div>
             </div>
+            <div class="products"></div>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"
+            integrity="sha256-ueyrqr8l8rvOsMLquv937WH2nCnOVRsaiscVb4cQjPQ="
+            crossorigin="anonymous"></script>
+    <!-- Js -->
+    <script src="./browser-app.js"></script>
 </body>
 </html>
