@@ -1,82 +1,81 @@
+// DOM of main website elements
 const nameInputDOM = document.querySelector('.filter-name')
 const priceFromInputDOM = document.querySelector('.price-from')
 const priceUpToInputDOM = document.querySelector('.price-up-to')
+const ratingFromInputDOM = document.querySelector('.rating-from')
+const ratingUpToInputDOM = document.querySelector('.rating-up-to')
 const companiesOptionsDOM = document.querySelector('.companies-options')
 const applyFiltersDOM = document.querySelector('.apply-filters-btn')  
 const resetFiltersDOM = document.querySelector('.reset-filters-btn')
-const checkboxesDOM = document.querySelectorAll('.company-name-checkbox')
 const productsDOM = document.querySelector('.products')                   
-// To do: Loading text
+
+// DOM of filter checkboxes
+const ikeaOptionDOM = document.getElementById('ikea')
+const liddyOptionDOM = document.getElementById('liddy')
+const marcosOptionDOM = document.getElementById('marcos')
+const caressaOptionDOM = document.getElementById('caressa')
+
 
 
 // show products based on the filter
 const ShowProducts = async (filter = {}) => {
   try {
-    const response = await axios.get('api/v1/products', {params: filter});
-    console.log(response); // Log the entire response to see its structure
+    const response = await axios.get('api/v1/products', { params: filter })
 
-    const {products} = response.data; // Assuming the products are in response.data
+    const { products } = response.data
 
-    console.log(products);
-
-    if(products.length < 1) {
-      return '<h5 class="empty-list" \ style="text-align: center">No products available</h5>'
-    }
-    const result = products.map((elem) => {
-      const {name, price, rating, company} = elem
-      return `<div class="product">
-      <div>${name}</div>
-      <div>${price}</div>
-      <div>${rating}</div>
-      <div>${company}</div>
-  </div>`
-    })
-
-    productsDOM.innerHTML = result.join('')
-    return
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-// generate company name filter options
-const SetFilters = async () => {
-  try {
-    // get array of possible options
-    let {data} = await axios.get('api/v1/products/filters')
-    const options = data;
-
-    // create html code
-    if(data.length < 1) {
-      companiesOptionsDOM.innerHTML =
-      '<h5 class="empty-list" \ style="text-align: center">No filters available</h5>'
+    if (products.length < 1) {
+      productsDOM.innerHTML = '<h5 class="empty-list">No products available</h5>'
       return
     }
-    else {
-      data = data.map((name) => {
-        return `<div class="comapny-option" style="display: flex; justify-content: center;">
-        <a>${name}</a>
-        <input type="checkbox" id="option-${name}" class="company-name-checkbox">
-    </div>`
-      })  
-    }
 
-    // show checkboxes
-    companiesOptionsDOM.innerHTML = data.join('\n')
-    // return options array
-    return options
+    const result = products.map((elem) => {
+      const { name, price, rating, company } = elem
+      return `
+        <div class="product-card">
+          <div class="product-name">${name}</div>
+          <div class="product-price">$${price.toFixed(2)}</div>
+          <div class="product-rating">Rating: ${rating}/5</div>
+          <div class="product-company">By: ${company}</div>
+        </div>
+      `
+    })
 
+    productsDOM.innerHTML = `<div class="product-list">${result.join('')}</div>`
   } catch (error) {
     console.log(error)
-    return
   }
 }
 
+// read filters
 const ReadFilters = () => {
-  const nameVal = nameInputDOM.value;
+  // name filter
+  const nameVal = nameInputDOM.value
+
+  let companyFilter = []
+  // company filter
+  if(ikeaOptionDOM.checked){
+    companyFilter.push('ikea')
+  }
+  if(liddyOptionDOM.checked){
+    companyFilter.push('liddy')
+  }
+  if(marcosOptionDOM.checked){
+    companyFilter.push('marcos')
+  }
+  if(caressaOptionDOM.checked){
+    companyFilter.push('caressa')
+  }
+
+  // numeric filters
   const priceFrom = priceFromInputDOM.value
   const priceUpTo = priceUpToInputDOM.value
-  let priceResult = ""
+  const ratingFrom = ratingFromInputDOM.value
+  const ratingUpTo = ratingUpToInputDOM.value
+  let priceResult = ''
+  let ratingResult = ''
+
+  // create filter strings
   if(priceFrom != '') {
     priceResult += `price>=${priceFrom}`
   }
@@ -87,9 +86,31 @@ const ReadFilters = () => {
     priceResult += `price<=${priceUpTo}`
   }
 
+  if(ratingFrom != '') {
+    ratingResult += `rating>=${ratingFrom}`
+  }
+  if(ratingUpTo != '' && ratingResult != '') {
+    ratingResult += `,rating<=${ratingUpTo}`
+  }
+  else if(ratingUpTo != '') {
+    ratingResult += `rating<=${ratingUpTo}`
+  }
+  let numericFiltersResult = {}
+
+  // join filter strings
+  if(priceResult != '' && ratingResult != '') {
+    numericFiltersResult = `${priceResult},${ratingResult}`
+  } else if (priceResult != ''){
+    numericFiltersResult = priceResult
+  } else if (ratingResult != ''){
+    numericFiltersResult = ratingResult
+  } 
+
+  // create result filter
   const result = {
     name : nameVal,
-    numericFilters : priceResult
+    numericFilters : numericFiltersResult,
+    company : companyFilter
   }
 
   return result
@@ -97,55 +118,78 @@ const ReadFilters = () => {
 
 // reset filters
 const ResetFilters = () => {
+  // reset text input values
   nameInputDOM.value = ''
   priceFromInputDOM.value = ''
   priceUpToInputDOM.value = ''
+  ratingFromInputDOM.value = ''
+  ratingUpToInputDOM.value = ''
+
+  // reset checkbox values
+  ikeaOptionDOM.checked = false
+  liddyOptionDOM.checked = false
+  marcosOptionDOM.checked = false
+  caressaOptionDOM.checked = false
 }
 
 // "Apply Filters" button event listener
 applyFiltersDOM.addEventListener('click', () => {
   const filter = ReadFilters()
-  console.log(filter)
   ShowProducts(filter)
 })
 
 // "Reset Filters" button event listener
 resetFiltersDOM.addEventListener('click', () => {
-  ResetFilters();
+  ResetFilters()
   ShowProducts()
 })
 
-// make price input boxes take only numbers
-const SetUpPriceInput = () => {
-  priceFromInputDOM.addEventListener("input", (event) => {
-    const inputElement = event.target
-    // replace non number elements with empty string
-    inputElement.value = inputElement.value.replace(/[^0-9.]/g, '')
+// make input fields accept only numeric values
+const SetUpNumericInput = () => {
+  const priceFromInputDOM = document.querySelector('.price-from')
+  const priceUpToInputDOM = document.querySelector('.price-up-to')
+  const ratingFromInputDOM = document.querySelector('.rating-from')
+  const ratingUpToInputDOM = document.querySelector('.rating-up-to')
 
-    // ensure that there's only one decimal point
-    const decimalCount = (inputElement.value.match(/\./g) || []).length
-    if (decimalCount > 1) {
-      // if more than one decimal point, remove the extras
-      inputElement.value = inputElement.value.replace(/\./g, '')
-    }
-  })
+  const setInputFilter = (textbox, inputFilter) => {
+    ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+      textbox.addEventListener(event, function () {
+        if (inputFilter(this.value)) {
+          this.oldValue = this.value
+          this.oldSelectionStart = this.selectionStart
+          this.oldSelectionEnd = this.selectionEnd
+        } else if (Object.prototype.hasOwnProperty.call(this, "oldValue")) {
+          this.value = this.oldValue
+          this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd)
+        } else {
+          this.value = ""
+        }
+      })
+    })
 
-  priceUpToInputDOM.addEventListener("input", (event) => {
-    const inputElement = event.target
-    // replace non number elements with empty string
-    inputElement.value = inputElement.value.replace(/[^0-9.]/g, '')
+    // Add a focusout event listener to clear the input value if it's empty when the input field loses focus
+    textbox.addEventListener("focusout", function () {
+      if (this.value === "") {
+        this.oldValue = ""
+      }
+    })
+  }
 
-    // ensure that there's only one decimal point
-    const decimalCount = (inputElement.value.match(/\./g) || []).length
-    
-    if (decimalCount > 1) {
-      // if more than one decimal point, remove the extras
-      inputElement.value = inputElement.value.replace(/\./g, '')
-    }
-  })
+  const priceFilter = function (value) {
+    return /^-?\d*[.]?\d{0,2}$/.test(value)
+  }
+
+  const ratingFilter = function (value) {
+    return /^[0-5]*$/.test(value)
+  }
+
+  setInputFilter(priceFromInputDOM, priceFilter)
+  setInputFilter(priceUpToInputDOM, priceFilter)
+  setInputFilter(ratingFromInputDOM, ratingFilter)
+  setInputFilter(ratingUpToInputDOM, ratingFilter)
 }
 
-SetFilters()
-SetUpPriceInput()
+
+SetUpNumericInput()
 ShowProducts()
 

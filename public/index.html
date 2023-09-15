@@ -22,27 +22,41 @@
                     <div>-</div>
                     <input type="text" class="price-up-to" placeholder="up to">
                 </div>
+                <div>Rating</div>
+                <div class="rating-filters-input">
+                    <input type="text" class="rating-from" placeholder="from">
+                    <div>-</div>
+                    <input type="text" class="rating-up-to" placeholder="up to">
+                </div>
             </div>
             <div class="filter-container">
                 <div>company</div>
                 <div class="companies-options">
-                    <div class="comapny-option" style="display: flex; justify-content: center;">
+                    <div class="company-option">
+                        <div>ikea</div>
+                        <input type="checkbox" id="ikea">
+                    </div>
+                    <div class="company-option">
+                        <div>liddy</div>
+                        <input type="checkbox" id="liddy">
+                    </div>
+                    <div class="company-option">
+                        <div>caressa</div>
+                        <input type="checkbox" id="caressa">
+                    </div>
+                    <div class="company-option">
+                        <div>marcos</div>
+                        <input type="checkbox" id="marcos">
                     </div>
                 </div>
             </div>
-            <div style="display: flex; justify-content: center; gap: 5px;">        
+            <div style="display: flex; justify-content: flex-start; gap: 5px;">        
                 <button class="apply-filters-btn">Apply Filters</button>
                 <button class="reset-filters-btn">Reset Filters</button>
             </div>
         </div>
         <!-- PRODUCTS -->
         <div class="products-container">
-            <div class="products-header">
-                <div>name</div>
-                <div>price</div>
-                <div>company</div>
-                <div>rating</div>
-            </div>
             <div class="products"></div>
         </div>
     </div>

@@ -28,16 +28,18 @@ const getAllProducts = async (req,res) => {
   if(name) {
     primaryQuery.name = {$regex : name, $options: 'i'}
   }
-  if(company) {
-    primaryQuery.company = company
+  if (company && Array.isArray(company)) { 
+    primaryQuery.company = { $in: company };
   }
+
   if(featured) {
     primaryQuery.featured = featured === 'true' ? true : false
  }
   
  // price and rating filters
-  const numericQuery = {price: {},rating : {}}
-  if (numericFilters) {
+ let numericQuery = {};
+ if (numericFilters) {
+  // replace symbols for db request
     const operatorMap = {
       '>': '$gt',
       '>=': '$gte',
@@ -51,6 +53,8 @@ const getAllProducts = async (req,res) => {
       (match) => `-${operatorMap[match]}-`
     );
     const options = ['price', 'rating'];
+
+    // create parameter array
     filters = filters.split(',').map((item) => {
       const [field, operator, value] = item.split('-');
       console.log(field + "/" + operator + "/" + value)
@@ -58,24 +62,31 @@ const getAllProducts = async (req,res) => {
         return {
           'field' : field,
           'operator' : operator,
-          'value' : value
+          'value' : Number(value)
         };
       }
     });
   
+    // join array into one filter
     filters.forEach((element) => {
       const { field, operator, value } = element;
       if (field == 'price') {
-        numericQuery.price[operator] = Number(value);
+        numericQuery[field] = {
+          ...numericQuery[field], // Preserve existing operators
+          [operator]: value,
+        };
       } else if (field == 'rating') {
-        numericQuery.rating[operator] = Number(value);
+        numericQuery[field] = {
+          ...numericQuery[field], // Preserve existing operators
+          [operator]: value,
+        };
       }
     });
   }
 
   // merge all filters
   const mergedQuery = {
-    ...queryObject,
+    ...primaryQuery,
     ...numericQuery
   }
 
@@ -87,7 +98,6 @@ const getAllProducts = async (req,res) => {
   } else {
     result = result.sort('createdAt')
   }
-
   if (fields) {
     const fieldsList = fields.split(',').join(' ')
     result = result.select(fieldsList)
@@ -103,20 +113,9 @@ const getAllProducts = async (req,res) => {
   res.status(200).json({products, nbHits: products.length})
 }
 
-// get company options to make matching filters available
-const getAllCompanyOptions = async (req, res) => {
-  try {
-    const companyOptions = await Product.distinct('company')
-    res.json(companyOptions)
-  } catch (error) {
-    console.log(error)
-    
-    res.status(500).json({error : 'Internal server error'})
-  }
-}
+
 
 module.exports = {
   getAllProducts,
   getAllProductsStatic,
-  getAllCompanyOptions
 }
